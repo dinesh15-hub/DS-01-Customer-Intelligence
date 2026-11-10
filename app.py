@@ -35,14 +35,18 @@ def load_customers():
 
     return df
 
-
 def load_csv(filename):
-    path = APP_DIR / filename
-    if path.exists():
+    path = APP_DIR / "csv files" / filename
+
+    if not path.exists():
+        st.warning(f"CSV not found: {path}")
+        return None
+
+    try:
         return pd.read_csv(path)
-    return None
-
-
+    except Exception as error:
+        st.error(f"Error loading {filename}: {error}")
+        return None
 def find_col(df, candidates):
     for name in candidates:
         if name in df.columns:
@@ -108,6 +112,8 @@ cluster_df = load_csv("customer_cluster_profile.csv")
 clv_df = load_csv("clv_summary.csv")
 contract_df = load_csv("contract_retention_summary.csv")
 roi_scenario_df = load_csv("retention_roi_scenario.csv")
+
+clv_df = load_csv("clv_summary.csv")
 
 # -------------------- Header and navigation --------------------
 st.markdown(
