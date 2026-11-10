@@ -1,0 +1,2 @@
+TargetCustomers,AssumedChurnReduction,CampaignCostPerCustomer,MonthsRetained,AverageMonthlyCharges,EstimatedAdditionalRetainedCustomers,EstimatedRevenuePreserved,TotalCampaignCost,EstimatedNetBenefit,ScenarioROI_Percent
+1000,0.05,10,6,64.76169246059918,50.0,19428.507738179753,10000,9428.507738179753,94.28507738179754
