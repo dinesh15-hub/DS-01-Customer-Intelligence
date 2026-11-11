@@ -418,6 +418,28 @@ st.markdown(
         color: var(--text);
         border-radius: 10px;
     }}
+
+    /* Keep text readable inside select boxes and dropdowns */
+    [data-baseweb="select"] *,
+    [data-baseweb="input"] *,
+    [data-baseweb="textarea"] {{
+        color: var(--text) !important;
+    }}
+
+    /* Make Streamlit info, warning and success messages readable
+       in both Light and Dark themes */
+    div[data-testid="stAlert"] {{
+        background: var(--surface-alt) !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text) !important;
+        border-radius: 12px !important;
+    }}
+    div[data-testid="stAlert"] [data-testid="stMarkdownContainer"],
+    div[data-testid="stAlert"] [data-testid="stMarkdownContainer"] p,
+    div[data-testid="stAlert"] span,
+    div[data-testid="stAlert"] label {{
+        color: var(--text) !important;
+    }}
     .stButton > button, .stDownloadButton > button {{
         border-radius: 10px;
         border: 1px solid var(--border);
