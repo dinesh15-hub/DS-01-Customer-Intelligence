@@ -77,13 +77,14 @@ def money(value):
 CHART_COLORS = ["#6546D7", "#168EAD", "#F08A5D", "#3A9D8F", "#D5A441"]
 
 def polish_chart(fig, height=390):
-    """Apply consistent dashboard styling and prevent wheel/drag zoom."""
+    """Apply theme-aware chart styling and prevent wheel/drag zoom."""
+    chart_text = "#52617A" if theme == "Light" else "#C2CEE0"
     fig.update_layout(
         height=height,
         autosize=True,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Inter, Segoe UI, sans-serif", size=12, color="#66758F"),
+        font=dict(family="Inter, Segoe UI, sans-serif", size=12, color=chart_text),
         margin=dict(l=18, r=22, t=28, b=42),
         showlegend=False,
         hoverlabel=dict(bgcolor="#17233B", font=dict(color="#FFFFFF", size=12)),
@@ -91,16 +92,20 @@ def polish_chart(fig, height=390):
     fig.update_xaxes(
         fixedrange=True,
         showline=False,
-        gridcolor="rgba(135,153,180,.16)",
+        gridcolor="rgba(135,153,180,.20)",
         zeroline=False,
         automargin=True,
+        tickfont=dict(color=chart_text),
+        title_font=dict(color=chart_text),
     )
     fig.update_yaxes(
         fixedrange=True,
         showline=False,
-        gridcolor="rgba(135,153,180,.16)",
+        gridcolor="rgba(135,153,180,.20)",
         zeroline=False,
         automargin=True,
+        tickfont=dict(color=chart_text),
+        title_font=dict(color=chart_text),
     )
     st.plotly_chart(
         fig,
@@ -419,26 +424,55 @@ st.markdown(
         border-radius: 10px;
     }}
 
-    /* Keep text readable inside select boxes and dropdowns */
-    [data-baseweb="select"] *,
-    [data-baseweb="input"] *,
-    [data-baseweb="textarea"] {{
+    /* Theme-aware inputs and dropdowns: force both control and value colours. */
+    [data-baseweb="select"] > div,
+    [data-baseweb="input"] > div,
+    [data-baseweb="textarea"],
+    [data-baseweb="select"] [role="combobox"] {{
+        background-color: var(--input-bg) !important;
+        border-color: var(--border) !important;
         color: var(--text) !important;
     }}
+    [data-baseweb="select"] *,
+    [data-baseweb="input"] *,
+    [data-baseweb="textarea"] *,
+    [data-baseweb="select"] input {{
+        color: var(--text) !important;
+        -webkit-text-fill-color: var(--text) !important;
+    }}
+    [data-baseweb="popover"],
+    [data-baseweb="popover"] > div,
+    [role="listbox"] {{
+        background-color: var(--surface) !important;
+        color: var(--text) !important;
+        border-color: var(--border) !important;
+    }}
+    [role="option"],
+    [role="option"] * {{
+        background-color: var(--surface) !important;
+        color: var(--text) !important;
+    }}
+    [role="option"]:hover,
+    [role="option"][aria-selected="true"] {{
+        background-color: var(--surface-alt) !important;
+    }}
 
-    /* Make Streamlit info, warning and success messages readable
-       in both Light and Dark themes */
-    div[data-testid="stAlert"] {{
+    /* Streamlit alerts: override the default theme background and text together. */
+    div[data-testid="stAlert"],
+    div[data-testid="stAlert"] > div {{
         background: var(--surface-alt) !important;
+        background-color: var(--surface-alt) !important;
         border: 1px solid var(--border) !important;
         color: var(--text) !important;
         border-radius: 12px !important;
     }}
+    div[data-testid="stAlert"] *,
     div[data-testid="stAlert"] [data-testid="stMarkdownContainer"],
     div[data-testid="stAlert"] [data-testid="stMarkdownContainer"] p,
     div[data-testid="stAlert"] span,
     div[data-testid="stAlert"] label {{
         color: var(--text) !important;
+        -webkit-text-fill-color: var(--text) !important;
     }}
     .stButton > button, .stDownloadButton > button {{
         border-radius: 10px;
