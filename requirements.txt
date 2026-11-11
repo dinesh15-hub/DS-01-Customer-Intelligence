@@ -11,3 +11,4 @@ lifelines
 matplotlib
 seaborn
 joblib
+plotly>=5.18.0

@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 import psycopg
 import streamlit as st
 
@@ -68,6 +70,41 @@ def money(value):
     return f"${value:,.2f}"
 
 
+# -------------------- Premium chart renderer --------------------
+CHART_COLORS = ["#6546D7", "#168EAD", "#F08A5D", "#3A9D8F", "#D5A441"]
+
+def polish_chart(fig, height=390):
+    """Apply consistent dashboard styling and prevent wheel/drag zoom."""
+    fig.update_layout(
+        height=height,
+        autosize=True,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter, Segoe UI, sans-serif", size=12, color="#66758F"),
+        margin=dict(l=18, r=22, t=28, b=42),
+        showlegend=False,
+        hoverlabel=dict(bgcolor="#17233B", font=dict(color="#FFFFFF", size=12)),
+    )
+    fig.update_xaxes(
+        fixedrange=True,
+        showline=False,
+        gridcolor="rgba(135,153,180,.16)",
+        zeroline=False,
+        automargin=True,
+    )
+    fig.update_yaxes(
+        fixedrange=True,
+        showline=False,
+        gridcolor="rgba(135,153,180,.16)",
+        zeroline=False,
+        automargin=True,
+    )
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config={"scrollZoom": False, "displayModeBar": False, "doubleClick": False},
+    )
+
 # -------------------- Load data --------------------
 try:
     customers_df = load_customers()
@@ -125,75 +162,315 @@ roi_scenario_df = load_csv("retention_roi_scenario.csv")
 
 clv_df = load_csv("clv_summary.csv")
 
-# -------------------- Header and navigation --------------------
+# -------------------- Premium interface and navigation --------------------
+# Appearance controls presentation only. Database, models, calculations,
+# analysis and page-level functionality below remain unchanged.
+theme = st.sidebar.radio(
+    "THEME",
+    ["Light", "Dark"],
+    horizontal=True,
+    index=0,
+    key="dashboard_theme",
+)
+
+if theme == "Dark":
+    palette = {
+        "app": "#090F1F",
+        "surface": "#111B2E",
+        "surface_alt": "#192943",
+        "border": "#2B3B56",
+        "text": "#F1F5FC",
+        "muted": "#A7B5CA",
+        "accent": "#A78BFA",
+        "accent2": "#38BDF8",
+        "shadow": "rgba(3,10,25,.34)",
+        "input": "#182338",
+    }
+else:
+    palette = {
+        "app": "#F2F5FB",
+        "surface": "#FFFFFF",
+        "surface_alt": "#F7F8FF",
+        "border": "#E3E8F2",
+        "text": "#17233B",
+        "muted": "#66758F",
+        "accent": "#6546D7",
+        "accent2": "#168EAD",
+        "shadow": "rgba(31,48,78,.09)",
+        "input": "#FFFFFF",
+    }
+
 st.markdown(
-    """
+    f"""
     <style>
-    .stApp {
-        background: linear-gradient(135deg, #f5f8ff 0%, #edf3fc 100%);
-    }
-    [data-testid="stSidebar"] {
-        background: #ffffff;
-        border-right: 1px solid #e5eaf3;
-    }
-    .block-container {
-        max-width: 1400px;
+    :root {{
+        --app-bg: {palette["app"]};
+        --surface: {palette["surface"]};
+        --surface-alt: {palette["surface_alt"]};
+        --border: {palette["border"]};
+        --text: {palette["text"]};
+        --muted: {palette["muted"]};
+        --accent: {palette["accent"]};
+        --accent-2: {palette["accent2"]};
+        --shadow: {palette["shadow"]};
+        --input-bg: {palette["input"]};
+    }}
+
+    html, body, [data-testid="stAppViewContainer"] {{
+        background: var(--app-bg);
+        color: var(--text);
+    }}
+    [data-testid="stHeader"] {{
+        background: transparent;
+    }}
+
+    /* Hide Streamlit's top-right three-dot main menu */
+    #MainMenu,
+    [data-testid="stMainMenu"],
+    [data-testid="stMainMenu"] button,
+    button[title="Main menu"] {{
+        display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }}
+    [data-testid="stAppViewContainer"] > .main {{
+        background: var(--app-bg);
+    }}
+    .block-container {{
+        max-width: 1660px;
+        padding: 1.35rem 2.6rem 3rem 2.6rem;
+    }}
+
+    /* Sidebar */
+    [data-testid="stSidebar"] {{
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        min-width: 265px;
+    }}
+    [data-testid="stSidebar"] > div:first-child {{
         padding-top: 1.5rem;
-        padding-bottom: 2.5rem;
-    }
-    .hero {
-        padding: 1.7rem 2rem;
-        border-radius: 20px;
-        background: linear-gradient(120deg, #172554, #2563eb);
-        color: white;
-        margin-bottom: 1.4rem;
-    }
-    .hero h1 {
-        color: white;
-        margin: .3rem 0 .5rem 0;
-        font-size: 2.1rem;
-    }
-    .hero p {
-        color: #dbeafe;
-        margin: 0;
-    }
-    div[data-testid="stMetric"] {
-        background: white;
-        border: 1px solid #e5eaf3;
+    }}
+    [data-testid="stSidebar"] * {{
+        color: var(--text);
+    }}
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {{
+        color: var(--muted);
+    }}
+
+    /* Main brand header */
+    .brandbar {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .3rem 0 1.25rem 0;
+        margin-bottom: 1.1rem;
+        border-bottom: 1px solid var(--border);
+    }}
+    .brand-left {{
+        display: flex;
+        align-items: center;
+        gap: .85rem;
+    }}
+    .brand-mark {{
+        width: 44px;
+        height: 44px;
         border-radius: 14px;
-        padding: 1rem;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, .04);
-    }
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        box-shadow: 0 8px 24px var(--shadow);
+        box-shadow: 0 8px 22px var(--shadow);
+    }}
+    .brand-name {{
+        color: var(--text);
+        font-size: 1.22rem;
+        font-weight: 850;
+        letter-spacing: -.02em;
+        line-height: 1.2;
+    }}
+    .brand-sub {{
+        color: var(--muted);
+        font-size: .84rem;
+        margin-top: .28rem;
+    }}
+    .status-chip {{
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 999px;
+        color: var(--muted);
+        padding: .48rem .85rem;
+        font-size: .76rem;
+        font-weight: 650;
+    }}
+
+    /* Navigation */
+    div[role="radiogroup"] {{
+        gap: .45rem;
+        flex-wrap: wrap;
+    }}
+    div[role="radiogroup"] label {{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        padding: .52rem .85rem;
+        min-height: 42px;
+    }}
+    div[role="radiogroup"] label p {{
+        color: var(--text);
+        font-weight: 650;
+        font-size: .84rem;
+    }}
+
+    /* Typography */
+    h1, h2, h3, h4, p, label, [data-testid="stMarkdownContainer"] {{
+        color: var(--text);
+    }}
+    h1 {{
+        letter-spacing: -.045em;
+        font-weight: 850;
+        font-size: 2.65rem !important;
+        line-height: 1.12;
+    }}
+    h2 {{
+        letter-spacing: -.03em;
+        font-weight: 800;
+        font-size: 2.05rem !important;
+        line-height: 1.2;
+        margin-top: .45rem;
+        margin-bottom: 1rem;
+    }}
+    h3 {{
+        letter-spacing: -.025em;
+        font-weight: 780;
+        font-size: 1.48rem !important;
+        line-height: 1.3;
+        margin-top: 1.15rem;
+        margin-bottom: .7rem;
+    }}
+    h4 {{
+        font-size: 1.18rem !important;
+        font-weight: 750;
+    }}
+    [data-testid="stCaptionContainer"], .stCaption {{
+        color: var(--muted);
+    }}
+
+    /* KPI cards */
+    div[data-testid="stMetric"] {{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        padding: 1.05rem 1.15rem;
+        box-shadow: 0 8px 26px var(--shadow);
+        min-height: 124px;
+        transition: transform .18s ease, border-color .18s ease,
+                    box-shadow .18s ease;
+    }}
+    div[data-testid="stMetric"]:hover {{
+        transform: translateY(-3px);
+        border-color: var(--accent-2);
+        box-shadow: 0 14px 32px var(--shadow);
+    }}
+    div[data-testid="stMetric"] label,
+    div[data-testid="stMetric"] [data-testid="stMetricLabel"] {{
+        color: var(--muted) !important;
+        font-size: .79rem;
+        font-weight: 650;
+    }}
+    div[data-testid="stMetric"] [data-testid="stMetricValue"] {{
+        color: var(--text) !important;
+        font-size: 1.95rem;
+        font-weight: 850;
+    }}
+
+    /* Content panels, charts and tables */
+    [data-testid="stDataFrame"],
+    [data-testid="stTable"],
+    [data-testid="stPlotlyChart"],
+    [data-testid="stVegaLiteChart"],
+    [data-testid="stArrowVegaLiteChart"] {{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        overflow: hidden;
+    }}
+    [data-testid="stExpander"] {{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+    }}
+    [data-baseweb="select"] > div,
+    [data-baseweb="input"] > div,
+    [data-baseweb="textarea"] {{
+        background: var(--input-bg);
+        border-color: var(--border);
+        color: var(--text);
+        border-radius: 10px;
+    }}
+    .stButton > button, .stDownloadButton > button {{
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-weight: 700;
+        min-height: 42px;
+    }}
+    hr {{
+        border-color: var(--border);
+    }}
+
+    @media (max-width: 900px) {{
+        .block-container {{
+            padding: 1rem 1rem 2rem 1rem;
+        }}
+        .brandbar {{
+            align-items: flex-start;
+            flex-direction: column;
+        }}
+    }}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
 st.markdown(
-    """
-    <div class="hero">
-        <div style="font-size:.8rem;font-weight:700;letter-spacing:.12em;">
-            CUSTOMER ANALYTICS • RETENTION MANAGEMENT
+    f"""
+    <div class="brandbar">
+        <div class="brand-left">
+            <div class="brand-mark">CI</div>
+            <div>
+                <div class="brand-name">Customer Intelligence</div>
+                <div class="brand-sub">Churn analytics&nbsp; · &nbsp;Customer value&nbsp; · &nbsp;Retention strategy</div>
+            </div>
         </div>
-        <h1>Customer Intelligence</h1>
-        <p>Explore churn, customer behavior, and retention campaign scenarios.</p>
+        <div class="status-chip">● &nbsp; PostgreSQL connected &nbsp;·&nbsp; {total_customers:,} records</div>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-page = st.sidebar.radio(
-    "Navigation",
-    [
-        "Overview",
-        "Churn Analysis",
-        "Customer Insights",
-        "Retention Campaigns",
-        "Retention ROI Simulator",
-    ],
+pages = [
+    "Overview",
+    "Churn Analysis",
+    "Customer Insights",
+    "Retention Campaigns",
+    "Retention ROI Simulator",
+]
+page = st.radio(
+    "Workspace",
+    pages,
+    horizontal=True,
+    label_visibility="collapsed",
+    key="dashboard_page",
 )
 
-st.sidebar.caption(f"Connected records: {total_customers:,}")
+st.markdown("---")
 
 # -------------------- Overview --------------------
 if page == "Overview":
@@ -222,7 +499,17 @@ if page == "Overview":
             },
             index=["Stayed", "Churned"],
         )
-        st.bar_chart(churn_summary)
+        churn_plot = churn_summary.reset_index()
+        churn_plot.columns = ["Status", "Customers"]
+        fig = px.bar(
+            churn_plot, x="Status", y="Customers", color="Status",
+            color_discrete_map={"Stayed": "#168EAD", "Churned": "#F08A5D"},
+            text="Customers",
+        )
+        fig.update_traces(marker_line_width=0, texttemplate="%{text:,.0f}", textposition="outside")
+        fig.update_yaxes(range=[0, float(churn_plot["Customers"].max()) * 1.18], title=None)
+        fig.update_xaxes(title=None)
+        polish_chart(fig, 380)
 
     with right:
         st.markdown("### Contract mix")
@@ -234,7 +521,17 @@ if page == "Overview":
                 .rename_axis("Contract")
                 .to_frame("Customers")
             )
-            st.bar_chart(contract_mix)
+            contract_plot = contract_mix.reset_index()
+            contract_plot.columns = ["Contract", "Customers"]
+            fig = px.bar(
+                contract_plot, x="Contract", y="Customers",
+                color="Contract", color_discrete_sequence=CHART_COLORS,
+                text="Customers",
+            )
+            fig.update_traces(marker_line_width=0, texttemplate="%{text:,.0f}", textposition="outside")
+            fig.update_yaxes(range=[0, float(contract_plot["Customers"].max()) * 1.18], title=None)
+            fig.update_xaxes(title=None)
+            polish_chart(fig, 380)
 
     st.markdown("### Customer value summary")
     if clv_df is not None:
@@ -258,7 +555,18 @@ elif page == "Churn Analysis":
             .mul(100)
             .sort_values(ascending=False)
         )
-        st.bar_chart(contract_churn)
+        contract_plot = contract_churn.rename("Churn rate").reset_index()
+        contract_plot.columns = ["Contract", "Churn rate"]
+        fig = px.bar(
+            contract_plot.sort_values("Churn rate"), x="Churn rate", y="Contract",
+            orientation="h", color="Churn rate",
+            color_continuous_scale=["#B8DCE5", "#168EAD", "#6546D7"],
+            text=contract_plot.sort_values("Churn rate")["Churn rate"].map(lambda x: f"{x:.1f}%"),
+        )
+        fig.update_traces(marker_line_width=0, textposition="outside")
+        fig.update_xaxes(title=None, ticksuffix="%", range=[0, float(contract_plot["Churn rate"].max()) * 1.22], color="#66758F")
+        fig.update_yaxes(title=None)
+        polish_chart(fig, 390)
 
     st.markdown("### Saved SHAP feature importance")
     if shap_df is not None:
@@ -276,7 +584,17 @@ elif page == "Churn Analysis":
                 .dropna()
                 .set_index(feature_col)
             )
-            st.bar_chart(plot_df.head(15))
+            shap_plot = plot_df.head(15).reset_index()
+            shap_plot.columns = ["Feature", "Importance"]
+            shap_plot = shap_plot.sort_values("Importance", ascending=True)
+            fig = px.bar(
+                shap_plot, x="Importance", y="Feature", orientation="h",
+                color="Importance", color_continuous_scale=["#B8DCE5", "#168EAD", "#6546D7"],
+            )
+            fig.update_traces(marker_line_width=0)
+            fig.update_xaxes(title=None)
+            fig.update_yaxes(title=None)
+            polish_chart(fig, 440)
 
     st.markdown("### Model evaluation")
 
@@ -385,10 +703,29 @@ elif page == "Retention Campaigns":
                 ]
             )
 
+            # Keep short-value columns compact; give the long contact guidance
+            # a controlled width instead of letting it dominate the table.
+            risk_column_config = {
+                id_col: st.column_config.TextColumn(
+                    "Customer ID", width="small"
+                ),
+                probability_col: st.column_config.NumberColumn(
+                    "Churn probability", width="small", format="percent"
+                ),
+                level_col: st.column_config.TextColumn(
+                    "Risk level", width="small"
+                ),
+                focus_col: st.column_config.TextColumn(
+                    "Contact focus", width="large"
+                ),
+            }
+
             st.dataframe(
                 filtered_risk_df[display_cols],
+                column_config=risk_column_config,
                 use_container_width=True,
                 hide_index=True,
+                height=390,
             )
 
             st.download_button(
@@ -439,9 +776,14 @@ elif page == "Retention Campaigns":
             survival_curve = kmf.survival_function_.reset_index()
             survival_curve.columns = ["Tenure (months)", "Churn-free probability"]
 
-            st.line_chart(
-                survival_curve.set_index("Tenure (months)")
+            fig = px.line(
+                survival_curve, x="Tenure (months)", y="Churn-free probability",
+                color_discrete_sequence=["#6546D7"],
             )
+            fig.update_traces(line=dict(width=3), hovertemplate="Month %{x}<br>Churn-free: %{y:.1%}<extra></extra>")
+            fig.update_yaxes(title=None, tickformat=".0%", range=[0, 1.02])
+            fig.update_xaxes(title="Tenure (months)")
+            polish_chart(fig, 400)
 
             m1, m2 = st.columns(2)
             m1.metric(
@@ -509,9 +851,18 @@ elif page == "Retention Campaigns":
                             how="outer"
                         )
 
-                    st.line_chart(
-                        combined.set_index("Tenure (months)")
+                    combined_long = combined.melt(
+                        id_vars=["Tenure (months)"], var_name="Contract",
+                        value_name="Churn-free probability"
+                    ).dropna()
+                    fig = px.line(
+                        combined_long, x="Tenure (months)", y="Churn-free probability",
+                        color="Contract", color_discrete_sequence=CHART_COLORS,
                     )
+                    fig.update_traces(line=dict(width=3), hovertemplate="%{fullData.name}<br>Month %{x}<br>Churn-free: %{y:.1%}<extra></extra>")
+                    fig.update_yaxes(title=None, tickformat=".0%", range=[0, 1.02])
+                    fig.update_xaxes(title="Tenure (months)")
+                    polish_chart(fig, 420)
 
                 try:
                     logrank = multivariate_logrank_test(
@@ -773,13 +1124,20 @@ elif page == "Retention ROI Simulator":
 
     with left:
         st.markdown("### Savings vs. campaign cost")
-        st.bar_chart(
-            pd.DataFrame(
-                {"Amount ($)": [revenue_preserved, discount_cost]},
-                index=["Revenue preserved", "Discount cost"],
-            ),
-            horizontal=True,
+        roi_plot = pd.DataFrame({
+            "Category": ["Revenue preserved", "Discount cost"],
+            "Amount ($)": [revenue_preserved, discount_cost],
+        })
+        fig = px.bar(
+            roi_plot, x="Amount ($)", y="Category", orientation="h",
+            color="Category",
+            color_discrete_map={"Revenue preserved": "#168EAD", "Discount cost": "#F08A5D"},
+            text="Amount ($)",
         )
+        fig.update_traces(marker_line_width=0, texttemplate="$%{text:,.0f}", textposition="outside")
+        fig.update_xaxes(title=None, tickprefix="$")
+        fig.update_yaxes(title=None)
+        polish_chart(fig, 360)
 
     with right:
         st.markdown("### Scenario details")
