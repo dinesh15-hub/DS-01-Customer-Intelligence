@@ -37,9 +37,12 @@ def load_customers():
     return df
 
 def load_csv(filename):
+    # Analysis files are now organised inside the outputs/ folder.
+    # The other paths are kept as fallbacks for local compatibility.
     possible_paths = [
+        APP_DIR / "outputs" / filename,
         APP_DIR / "csv files" / filename,
-        APP_DIR / filename
+        APP_DIR / filename,
     ]
 
     for path in possible_paths:
@@ -50,7 +53,7 @@ def load_csv(filename):
                 st.warning(f"Could not read {filename}: {error}")
                 return None
 
-    st.warning(f"CSV not found: {filename}")
+    st.warning(f"CSV not found in the outputs folder: {filename}")
     return None
 
 def find_col(df, candidates):
@@ -537,7 +540,7 @@ if page == "Overview":
     if clv_df is not None:
         st.dataframe(clv_df, use_container_width=True, hide_index=True)
     else:
-        st.info("Add clv_summary.csv beside app.py.")
+        st.info("Add clv_summary.csv to the outputs/ folder.")
 
 # -------------------- Churn Analysis --------------------
 elif page == "Churn Analysis":
@@ -602,14 +605,14 @@ elif page == "Churn Analysis":
     if metrics_df is not None:
         st.dataframe(metrics_df, use_container_width=True, hide_index=True)
     else:
-        st.info("Add model_evaluation.csv with actual model metrics.")
+        st.info("Add model_evaluation.csv to the outputs/ folder with actual model metrics.")
 
     confusion_df = load_csv("confusion_matrix.csv")
     if confusion_df is not None:
         st.markdown("### Confusion matrix")
         st.dataframe(confusion_df, use_container_width=True, hide_index=True)
     else:
-        st.info("Add confusion_matrix.csv with actual confusion matrix values.")
+        st.info("Add confusion_matrix.csv to the outputs/ folder with actual confusion matrix values.")
 
 # -------------------- Customer Insights --------------------
 elif page == "Customer Insights":
@@ -736,7 +739,7 @@ elif page == "Retention Campaigns":
             )
     else:
         st.info(
-            "Place customer_churn_risk.csv beside app.py. "
+            "Place customer_churn_risk.csv in the outputs/ folder. "
             "Export it from Colab and copy it into the app folder."
         )
 
@@ -864,8 +867,7 @@ elif page == "Retention Campaigns":
                     fig.update_xaxes(title="Tenure (months)")
                     polish_chart(fig, 420)
 
-                
-            
+               
             try:
                 logrank = multivariate_logrank_test(
                     event_durations=contract_survival[tenure_col],
@@ -1059,7 +1061,7 @@ elif page == "Retention Campaigns":
             hide_index=True
         )
     else:
-        st.info("Add retention_roi_scenario.csv beside app.py.")
+        st.info("Add retention_roi_scenario.csv to the outputs/ folder.")
 # -------------------- ROI Simulator --------------------
 elif page == "Retention ROI Simulator":
     st.subheader("Retention ROI Simulator")
@@ -1169,7 +1171,9 @@ elif page == "Retention ROI Simulator":
         "This is a scenario calculator, not a measured campaign result."
     )
 
-    sensitivity_path = APP_DIR / "retention_roi_sensitivity.png"
+    sensitivity_path = APP_DIR / "outputs" / "retention_roi_sensitivity.png"
+    if not sensitivity_path.exists():
+        sensitivity_path = APP_DIR / "retention_roi_sensitivity.png"
     if sensitivity_path.exists():
         st.markdown("### Saved sensitivity analysis")
         st.image(
