@@ -16,6 +16,21 @@ The goal of this project was to develop a customer intelligence platform combini
 
 The project uses **7,043 customer records** from the IBM Telco Customer Churn dataset. The workflow covers data cleaning, exploratory analysis, churn prediction, customer segmentation, CLV estimation, and retention ROI analysis.
 
+## System Architecture
+
+The application follows a simple data analytics workflow:
+
+1. **Data Source:** IBM Telco Customer Churn dataset containing 7,043 customer records.
+2. **Data Processing:** Python, Pandas and NumPy are used for cleaning, preprocessing and feature engineering.
+3. **Analytics & Modelling:** Scikit-learn and LightGBM are used for churn prediction, SHAP for model explainability, and Lifelines for survival analysis.
+4. **Database:** Customer records are stored in a Neon PostgreSQL database.
+5. **Dashboard:** Streamlit connects to PostgreSQL and uses the generated analytical outputs to display customer insights, churn analysis, retention campaigns and ROI scenarios.
+6. **Deployment:** The application is deployed using Streamlit Community Cloud.
+
+The overall workflow is:
+
+`IBM Telco Dataset → Data Processing → Machine Learning & Analysis → PostgreSQL / Analytical Outputs → Streamlit Dashboard`
+
 ## Dashboard Features
 
 The Streamlit application includes five main sections:
