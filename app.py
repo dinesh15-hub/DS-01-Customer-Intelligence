@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 import pandas as pd
@@ -36,23 +35,34 @@ def load_customers():
     return df
 
 def load_csv(filename):
-    path = APP_DIR / "csv files" / filename
+    possible_paths = [
+        APP_DIR / "csv files" / filename,
+        APP_DIR / filename
+    ]
 
-    if not path.exists():
-        st.warning(f"CSV not found: {path}")
-        return None
+    for path in possible_paths:
+        if path.exists():
+            try:
+                return pd.read_csv(path)
+            except Exception as error:
+                st.warning(f"Could not read {filename}: {error}")
+                return None
 
-    try:
-        return pd.read_csv(path)
-    except Exception as error:
-        st.error(f"Error loading {filename}: {error}")
-        return None
-def find_col(df, candidates):
-    for name in candidates:
-        if name in df.columns:
-            return name
+    st.warning(f"CSV not found: {filename}")
     return None
 
+def find_col(df, candidates):
+    if df is None or df.empty:
+        return None
+
+    columns = {str(col).strip().lower(): col for col in df.columns}
+
+    for candidate in candidates:
+        key = candidate.strip().lower()
+        if key in columns:
+            return columns[key]
+
+    return None
 
 def money(value):
     return f"${value:,.2f}"
