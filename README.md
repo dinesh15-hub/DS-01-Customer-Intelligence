@@ -29,7 +29,7 @@ The application follows a simple data analytics workflow:
 
 The overall workflow is:
 
-![DS-01 System Architecture](architecture.png)
+![DS-01 System Architecture](screenshots/architecture.png)
 
 ## Dashboard Features
 
@@ -64,28 +64,28 @@ The Streamlit application includes five main sections:
   ## 📸 Dashboard Screenshots
 
 ### 1. Business Overview
-![Overview](01-overview.png)
+![Overview](screenshots/01-overview.png)
 
 ### 2. Contract Churn Analysis
-![Contract Churn](02-contract-churn.png)
+![Contract Churn](screenshots/02-contract-churn.png)
 
 ### 3. SHAP Feature Importance
-![SHAP](03-shap-importance.png)
+![SHAP](screenshots/03-shap-importance.png)
 
 ### 4. Customer Cluster Profiles
-![Customer Clusters](04-customer-clusters.png)
+![Customer Clusters](screenshots/04-customer-clusters.png)
 
 ### 5. Customer Records
-![Customer Records](05-customer-records.png)
+![Customer Records](screenshots/05-customer-records.png)
 
 ### 6. Customer Churn Risk
-![Churn Risk](06-customer-churn-risk.png)
+![Churn Risk](screenshots/06-customer-churn-risk.png)
 
 ### 7. Kaplan–Meier Survival Analysis
-![Survival Analysis](07-kaplan-meier-survival.png)
+![Survival Analysis](screenshots/07-kaplan-meier-survival.png)
 
 ### 8. Retention ROI Simulator
-![ROI Simulator](08-retention-roi-simulator.png)
+![ROI Simulator](screenshots/08-retention-roi-simulator.png)
 
 ## Dataset
 
