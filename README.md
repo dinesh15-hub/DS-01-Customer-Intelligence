@@ -29,7 +29,7 @@ The application follows a simple data analytics workflow:
 
 The overall workflow is:
 
-`IBM Telco Dataset → Data Processing → Machine Learning & Analysis → PostgreSQL / Analytical Outputs → Streamlit Dashboard`
+![DS-01 System Architecture](architecture.png)
 
 ## Dashboard Features
 
