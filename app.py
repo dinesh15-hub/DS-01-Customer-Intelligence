@@ -864,26 +864,37 @@ elif page == "Retention Campaigns":
                     fig.update_xaxes(title="Tenure (months)")
                     polish_chart(fig, 420)
 
-                try:
-                    logrank = multivariate_logrank_test(
-    contract_survival[tenure_col],
-    contract_survival[contract_col],
-    event_durations=contract_survival[tenure_col],
-    event_observed=(
-        contract_survival[churn_col]
-        .astype(str)
-        .str.strip()
-        .str.lower()
-        .isin(["yes", "true", "1", "churned"])
-        .astype(int)
-    ),
-)
-                    st.write(
-                        f"Contract-group log-rank test p-value: "
-                        f"{logrank.p_value:.4g}"
+                
+            
+            try:
+                logrank = multivariate_logrank_test(
+                    event_durations=contract_survival[tenure_col],
+                    groups=contract_survival[contract_col],
+                    event_observed=(
+                        contract_survival[churn_col]
+                        .astype(str)
+                        .str.strip()
+                        .str.lower()
+                        .isin(["yes", "true", "1", "churned"])
+                        .astype(int)
                     )
-                except Exception as error:
-                    st.caption(f"Could not calculate the log-rank test: {error}")
+                )
+
+                p_value = logrank.p_value
+
+                if p_value < 0.0001:
+                    st.write("Contract-group log-rank test p-value: < 0.0001")
+                else:
+                    st.write(
+                        f"Contract-group log-rank test p-value: {p_value:.4f}"
+                    )
+
+            except Exception as error:
+                st.caption(
+                    f"Could not calculate the log-rank test: {error}"
+                )
+
+
 
     except ImportError:
         st.warning(
