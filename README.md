@@ -61,6 +61,32 @@ The Streamlit application includes five main sections:
 - Estimated revenue preservation and campaign costs.
 - Comparison of potential campaign outcomes.
 
+  ## 📸 Dashboard Screenshots
+
+### 1. Business Overview
+![Overview](01-overview.png)
+
+### 2. Contract Churn Analysis
+![Contract Churn](02-contract-churn.png)
+
+### 3. SHAP Feature Importance
+![SHAP](03-shap-importance.png)
+
+### 4. Customer Cluster Profiles
+![Customer Clusters](04-customer-clusters.png)
+
+### 5. Customer Records
+![Customer Records](05-customer-records.png)
+
+### 6. Customer Churn Risk
+![Churn Risk](06-customer-churn-risk.png)
+
+### 7. Kaplan–Meier Survival Analysis
+![Survival Analysis](07-kaplan-meier-survival.png)
+
+### 8. Retention ROI Simulator
+![ROI Simulator](08-retention-roi-simulator.png)
+
 ## Dataset
 
 **Source:** IBM Telco Customer Churn dataset
