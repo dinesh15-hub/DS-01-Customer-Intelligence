@@ -1,112 +1,104 @@
 # Customer Lifetime Value & Churn Intelligence System
 
-An end-to-end customer analytics project built to understand why customers leave, identify customers at risk of churning, and explore ways businesses can improve customer retention.
+**DS-01 Internship Project | Nexvia Technologies**
 
-This project was developed as part of the **DS-01 Internship Project at Nexvia Technologies** using the IBM Telco Customer Churn dataset.
+An end-to-end customer analytics project built using the IBM Telco Customer Churn dataset to understand customer behaviour, predict churn, estimate customer lifetime value, and explore retention strategies.
+
+**Live Dashboard:** [Customer Intelligence – Streamlit](https://ds-01-customer-intelligence-project.streamlit.app/)
+
+**GitHub:** [DS-01 Customer Intelligence](https://github.com/dinesh15-hub/DS-01-Customer-Intelligence)
 
 ## About the Project
 
-Customer churn is a major challenge for subscription-based businesses. Losing customers affects recurring revenue, and understanding the reasons behind those decisions can help businesses make better retention strategies.
+Customer churn is a major challenge for subscription-based businesses. Understanding why customers leave and identifying those at risk can help businesses improve retention and protect recurring revenue.
 
-The goal of this project was to build a single platform that brings together customer churn analysis, predictive modelling, customer segmentation, lifetime value analysis, and retention planning.
+The goal of this project was to develop a customer intelligence platform combining data analysis, machine learning, survival analysis, and business insights in one interactive dashboard.
 
-I used Python for data analysis and machine learning, PostgreSQL for storing customer records, and Streamlit to bring the results together in an interactive dashboard.
+The project uses **7,043 customer records** from the IBM Telco Customer Churn dataset. The workflow covers data cleaning, exploratory analysis, churn prediction, customer segmentation, CLV estimation, and retention ROI analysis.
 
-The project uses **7,043 customer records** from the IBM Telco Customer Churn dataset.
+## Dashboard Features
 
-## What the Project Covers
-
-The application is organised into five main sections:
+The Streamlit application includes five main sections:
 
 ### 1. Business Overview
-- Displays the total customer count and overall churn rate.
-- Provides an overview of customer distribution and contract types.
-- Highlights important business-level metrics.
+- Total customers, churn rate, and monthly revenue.
+- Customer distribution and contract mix.
+- Key business performance metrics.
 
 ### 2. Churn Analysis
-- Examines customer churn across different contract types and service categories.
-- Uses LightGBM to predict customer churn.
-- Applies SHAP to understand which features contribute most to model predictions.
-- Helps identify customer characteristics associated with higher churn risk.
+- Churn patterns across contracts and services.
+- Churn prediction using Logistic Regression and LightGBM.
+- Model evaluation and SHAP feature importance.
 
 ### 3. Customer Insights
-- Groups customers into different segments.
-- Explores customer behaviour and revenue patterns.
-- Estimates customer lifetime value using historical revenue information.
+- Customer segmentation using clustering.
+- Customer behaviour and revenue analysis.
+- Customer lifetime value estimation.
 
 ### 4. Retention Campaigns
-- Displays customer-level churn risk estimates.
-- Provides customer-focused retention suggestions.
-- Uses Kaplan–Meier survival analysis to study customer retention over time.
-- Applies a Cox Proportional Hazards model to examine factors associated with churn.
+- Customer-level churn risk predictions.
+- Risk categorisation and retention suggestions.
+- Kaplan–Meier survival analysis.
+- Cox Proportional Hazards modelling.
 
 ### 5. Retention ROI Simulator
-- Allows users to explore different retention campaign scenarios.
-- Estimates potential revenue preservation and campaign costs.
-- Helps compare possible outcomes under different assumptions.
-
-## Tools & Technologies
-
-| Technology | Purpose |
-|---|---|
-| Python | Data analysis and application development |
-| Pandas & NumPy | Data cleaning and manipulation |
-| Scikit-learn | Model preparation and evaluation |
-| LightGBM | Churn prediction |
-| SHAP | Model explainability |
-| Lifelines | Survival analysis |
-| PostgreSQL (Neon) | Customer data storage |
-| Streamlit | Interactive dashboard |
-| Plotly | Interactive charts and visualisations |
+- Interactive retention campaign scenarios.
+- Estimated revenue preservation and campaign costs.
+- Comparison of potential campaign outcomes.
 
 ## Dataset
 
 **Source:** IBM Telco Customer Churn dataset
 
-- Total records: 7,043
-- Original features: 21 predictors and 1 target column
+- Customer records: 7,043
+- Original columns: 22
 - Target variable: `Churn`
 
-The dataset contains customer demographics, subscribed services, contract details, payment information, tenure, and billing information.
+The dataset includes customer demographics, tenure, subscribed services, contract details, payment methods, and billing information.
 
-Data cleaning and preprocessing were performed before using the dataset for analysis and modelling.
+Data cleaning and feature engineering were performed before analysis and model development.
 
-## Machine Learning & Analysis
+## Technologies Used
 
-The project includes the following analytical work:
+- **Python** – Main programming language
+- **Pandas & NumPy** – Data cleaning and manipulation
+- **Scikit-learn** – Machine learning and preprocessing
+- **LightGBM** – Churn classification
+- **SHAP** – Model explainability
+- **Lifelines** – Survival analysis
+- **PostgreSQL & Neon** – Customer data storage
+- **Streamlit** – Dashboard development
+- **Plotly** – Interactive visualisations
+
+## Key Analysis
+
+The project includes:
 
 - Exploratory Data Analysis (EDA)
 - Data cleaning and feature engineering
-- Churn classification using Logistic Regression and LightGBM
+- Logistic Regression and LightGBM churn models
 - Model evaluation and comparison
-- SHAP-based feature importance analysis
-- Customer segmentation and clustering
+- SHAP-based feature importance
+- Customer clustering and segmentation
 - Customer lifetime value estimation
 - Kaplan–Meier survival analysis
 - Cox Proportional Hazards modelling
-- Retention campaign ROI scenario analysis
+- Retention ROI scenario analysis
 
-The aim was not just to generate predictions, but also to make the results understandable from a business perspective.
+## Uplift Modelling – Limitation
 
-## Application & Database
-
-Customer records are stored in a Neon PostgreSQL database and accessed by the Streamlit application.
-
-The dashboard currently contains five functional pages, with interactive charts, customer-level risk information, and scenario-based analysis.
-
-**Live Dashboard:**  
-[Customer Intelligence – Streamlit App](https://ds-01-customer-intelligence-project.streamlit.app/)
+Uplift modelling using CausalML was part of the original requirements. However, the IBM Telco dataset does not contain customer treatment assignments or retention offer-response data. Without this information, the actual impact of retention campaigns cannot be reliably measured. Therefore, uplift modelling remains unimplemented.
 
 ## Running the Project Locally
 
-### 1. Clone the repository
+**1. Clone the repository**
 
 ```bash
 git clone https://github.com/dinesh15-hub/DS-01-Customer-Intelligence.git
 cd DS-01-Customer-Intelligence
 ```
 
-### 2. Create a virtual environment (recommended)
+**2. Create a virtual environment (recommended)**
 
 ```bash
 python -m venv venv
@@ -118,17 +110,15 @@ Activate it on Windows:
 venv\Scripts\activate
 ```
 
-### 3. Install dependencies
+**3. Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure PostgreSQL credentials
+**4. Configure PostgreSQL credentials**
 
-Create a file named `secrets.toml` inside the `.streamlit` folder.
-
-Add your own PostgreSQL connection details:
+Create `.streamlit/secrets.toml` and add your own database credentials:
 
 ```toml
 [postgres]
@@ -140,37 +130,30 @@ database = "YOUR_DATABASE"
 sslmode = "require"
 ```
 
-Make sure the credentials are kept private and are never committed to GitHub.
+Keep your credentials private. Never upload `secrets.toml` to GitHub.
 
-### 5. Start the application
+**5. Run the application**
 
 ```bash
 streamlit run app.py
 ```
 
-The application should open in your browser at:
-
-`http://localhost:8501`
-
-## Current Project Status
-
-The main customer analytics application has been implemented and deployed.
-
-Completed work includes data preparation, churn prediction, model explainability, customer segmentation, CLV estimation, survival analysis, PostgreSQL integration, and the interactive ROI simulator.
-
-**Uplift modelling:** Customer-level uplift outputs are present in the project workflow, but the results still require validation. They should not be interpreted as proven causal campaign effects.
+The application will open at `http://localhost:8501`.
 
 ## What I Learned
 
-Working on this project gave me practical experience in taking a dataset through the complete analytics workflow, from cleaning and exploration to model development and dashboard deployment.
+Working on this project gave me practical experience with the complete data analytics workflow, from preparing raw data and building machine learning models to interpreting results and deploying an interactive application.
 
-I also got to work with PostgreSQL, build interactive visualisations, interpret machine learning results, and connect analytical findings to business decisions.
+It also helped me understand how analytical findings can be connected to real business problems, particularly customer retention and revenue management.
 
-One of the most important takeaways was that a useful analytics solution should do more than display numbers. It should help someone understand what is happening and what they could do next.
+## Acknowledgement
+
+Developed as part of the **DS-01 Internship Project at Nexvia Technologies**.
+
+Dataset: IBM Telco Customer Churn.
 
 ## Author
 
-**DS-01 Internship Project**  
-Nexvia Technologies
+**Dinesh Chandra Reddy**
 
-**GitHub:** [dinesh15-hub](https://github.com/dinesh15-hub)
+[GitHub Profile](https://github.com/dinesh15-hub)
