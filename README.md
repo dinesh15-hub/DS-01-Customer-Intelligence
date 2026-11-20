@@ -2,89 +2,72 @@
 
 **DS-01 Internship Project | Nexvia Technologies**
 
-An end-to-end customer analytics project built using the IBM Telco Customer Churn dataset to understand customer behaviour, predict churn, estimate customer lifetime value, and explore retention strategies.
+An end-to-end customer analytics project built on the IBM Telco Customer Churn dataset to understand customer behaviour, predict churn, estimate customer lifetime value and explore retention strategies.
 
 **Live Dashboard:** [Customer Intelligence – Streamlit](https://ds-01-customer-intelligence-project.streamlit.app/)
-
 **GitHub:** [DS-01 Customer Intelligence](https://github.com/dinesh15-hub/DS-01-Customer-Intelligence)
+
+![Business Overview](screenshots/01-overview.png)
 
 ## About the Project
 
-Customer churn is a major challenge for subscription-based businesses. Understanding why customers leave and identifying those at risk can help businesses improve retention and protect recurring revenue.
+Customer churn is a major challenge for subscription-based businesses. Understanding why customers leave, and identifying those at risk, helps a business improve retention and protect recurring revenue.
 
-The goal of this project was to develop a customer intelligence platform combining data analysis, machine learning, survival analysis, and business insights in one interactive dashboard.
+The goal of this project was to build a customer intelligence platform that combines data analysis, machine learning, survival analysis and business insights in one interactive dashboard.
 
-The project uses **7,043 customer records** from the IBM Telco Customer Churn dataset. The workflow covers data cleaning, exploratory analysis, churn prediction, customer segmentation, CLV estimation, and retention ROI analysis.
+The project uses **7,043 customer records** from the IBM Telco Customer Churn dataset. The workflow covers data cleaning, exploratory analysis, churn prediction, customer segmentation, CLV estimation and retention ROI analysis.
 
 ## System Architecture
 
-The application follows a simple data analytics workflow:
-
-1. **Data Source:** IBM Telco Customer Churn dataset containing 7,043 customer records.
-2. **Data Processing:** Python, Pandas and NumPy are used for cleaning, preprocessing and feature engineering.
-3. **Analytics & Modelling:** Scikit-learn and LightGBM are used for churn prediction, SHAP for model explainability, and Lifelines for survival analysis.
+1. **Data Source:** IBM Telco Customer Churn dataset (7,043 customer records).
+2. **Data Processing:** Python, Pandas and NumPy for cleaning, preprocessing and feature engineering.
+3. **Analytics & Modelling:** Scikit-learn and LightGBM for churn prediction, SHAP for model explainability and Lifelines for survival analysis.
 4. **Database:** Customer records are stored in a Neon PostgreSQL database.
-5. **Dashboard:** Streamlit connects to PostgreSQL and uses the generated analytical outputs to display customer insights, churn analysis, retention campaigns and ROI scenarios.
-6. **Deployment:** The application is deployed using Streamlit Community Cloud.
-
-The overall workflow is:
+5. **Dashboard:** Streamlit connects to PostgreSQL and uses the generated analytical outputs to display customer insights, churn analysis, retention actions and ROI scenarios.
+6. **Deployment:** Streamlit Community Cloud.
 
 ![DS-01 System Architecture](screenshots/architecture.png)
 
 ## Dashboard Features
 
-The Streamlit application includes five main sections:
+The Streamlit dashboard has a top navigation bar (no sidebar), shared filters, and Light and Dark themes. It has four pages:
 
-### 1. Business Overview
-- Total customers, churn rate, and monthly revenue.
+### 1. Overview
+- Total customers, churn rate, monthly revenue and revenue at risk.
 - Customer distribution and contract mix.
-- Key business performance metrics.
 
-### 2. Churn Analysis
+### 2. Why customers churn
 - Churn patterns across contracts and services.
-- Churn prediction using Logistic Regression and LightGBM.
-- Model evaluation and SHAP feature importance.
+- Churn prediction with Logistic Regression and LightGBM, with model evaluation.
+- SHAP feature importance (shows what influences the model, not what causes churn).
+- Customer segmentation with cluster profiles.
 
-### 3. Customer Insights
-- Customer segmentation using clustering.
-- Customer behaviour and revenue analysis.
-- Customer lifetime value estimation.
+### 3. Survival analysis
+- Kaplan–Meier survival curves.
+- Cox Proportional Hazards model with a proportional-hazards check.
 
-### 4. Retention Campaigns
-- Customer-level churn risk predictions.
-- Risk categorisation and retention suggestions.
-- Kaplan–Meier survival analysis.
-- Cox Proportional Hazards modelling.
+### 4. Take action
+- Customer-level churn risk list with risk levels and suggested contact focus.
+- Retention ROI simulator with adjustable scenarios, revenue-based ROI and a visible disclaimer.
 
-### 5. Retention ROI Simulator
-- Interactive retention campaign scenarios.
-- Estimated revenue preservation and campaign costs.
-- Comparison of potential campaign outcomes.
+## Dashboard Screenshots
 
-  ## 📸 Dashboard Screenshots
-
-### 1. Business Overview
-![Overview](screenshots/01-overview.png)
-
-### 2. Contract Churn Analysis
+### Contract Churn Analysis
 ![Contract Churn](screenshots/02-contract-churn.png)
 
-### 3. SHAP Feature Importance
+### SHAP Feature Importance
 ![SHAP](screenshots/03-shap-importance.png)
 
-### 4. Customer Cluster Profiles
+### Customer Cluster Profiles and Records
 ![Customer Clusters](screenshots/04-customer-clusters.png)
 
-### 5. Customer Records
-![Customer Records](screenshots/05-customer-records.png)
-
-### 6. Customer Churn Risk
+### Customer Churn Risk
 ![Churn Risk](screenshots/06-customer-churn-risk.png)
 
-### 7. Kaplan–Meier Survival Analysis
+### Kaplan–Meier Survival Analysis
 ![Survival Analysis](screenshots/07-kaplan-meier-survival.png)
 
-### 8. Retention ROI Simulator
+### Retention ROI Simulator
 ![ROI Simulator](screenshots/08-retention-roi-simulator.png)
 
 ## Dataset
@@ -95,30 +78,25 @@ The Streamlit application includes five main sections:
 - Original columns: 22
 - Target variable: `Churn`
 
-The dataset includes customer demographics, tenure, subscribed services, contract details, payment methods, and billing information.
-
-Data cleaning and feature engineering were performed before analysis and model development.
+The dataset includes customer demographics, tenure, subscribed services, contract details, payment methods and billing information. Data cleaning and feature engineering were performed before analysis and model development.
 
 ## Technologies Used
 
-- **Python** – Main programming language
-- **Pandas & NumPy** – Data cleaning and manipulation
-- **Scikit-learn** – Machine learning and preprocessing
-- **LightGBM** – Churn classification
-- **SHAP** – Model explainability
-- **Lifelines** – Survival analysis
-- **PostgreSQL & Neon** – Customer data storage
-- **Streamlit** – Dashboard development
-- **Plotly** – Interactive visualisations
+- **Python** – main programming language
+- **Pandas & NumPy** – data cleaning and manipulation
+- **Scikit-learn** – machine learning and preprocessing
+- **LightGBM** – churn classification
+- **SHAP** – model explainability
+- **Lifelines** – survival analysis
+- **PostgreSQL & Neon** – customer data storage
+- **Streamlit** – dashboard development
+- **Plotly** – interactive visualisations
 
 ## Key Analysis
 
-The project includes:
-
 - Exploratory Data Analysis (EDA)
 - Data cleaning and feature engineering
-- Logistic Regression and LightGBM churn models
-- Model evaluation and comparison
+- Logistic Regression and LightGBM churn models, with evaluation and comparison
 - SHAP-based feature importance
 - Customer clustering and segmentation
 - Customer lifetime value estimation
@@ -126,9 +104,11 @@ The project includes:
 - Cox Proportional Hazards modelling
 - Retention ROI scenario analysis
 
-## Uplift Modelling – Limitation
+## Limitations
 
-Uplift modelling using CausalML was part of the original requirements. However, the IBM Telco dataset does not contain customer treatment assignments or retention offer-response data. Without this information, the actual impact of retention campaigns cannot be reliably measured. Therefore, uplift modelling remains unimplemented.
+- **Uplift modelling not implemented.** It was part of the original requirements, but the IBM Telco dataset has no customer treatment assignments or retention offer-response data, so the real impact of a campaign cannot be measured reliably.
+- **ROI is a scenario estimate, not a forecast.** It is revenue-based (not profit) and depends on assumptions such as campaign cost, success rate and customer eligibility.
+- **SHAP is not causal.** It shows which features influence the model, not why customers leave.
 
 ## Running the Project Locally
 
@@ -143,12 +123,8 @@ cd DS-01-Customer-Intelligence
 
 ```bash
 python -m venv venv
-```
-
-Activate it on Windows:
-
-```bash
-venv\Scripts\activate
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # macOS / Linux
 ```
 
 **3. Install dependencies**
@@ -179,22 +155,29 @@ Keep your credentials private. Never upload `secrets.toml` to GitHub.
 streamlit run app.py
 ```
 
-The application will open at `http://localhost:8501`.
+The application opens at `http://localhost:8501`.
 
-## What I Learned
+## Individual Reflection
 
-Working on this project gave me practical experience with the complete data analytics workflow, from preparing raw data and building machine learning models to interpreting results and deploying an interactive application.
+**What I built.** I built an end-to-end customer analytics system on the IBM Telco dataset. It predicts churn with Logistic Regression and LightGBM, explains the predictions with SHAP, estimates how long customers stay with Kaplan-Meier and Cox models, and simulates the return on a retention campaign. Everything is presented in an interactive Streamlit dashboard.
 
-It also helped me understand how analytical findings can be connected to real business problems, particularly customer retention and revenue management.
+**What I learned.**
+- A good churn model is only useful if it leads to an action. Moving from "who will churn" to "who should we contact, and is it worth it" taught me more than tuning the model did.
+- SHAP shows which features influence the model, not what causes churn. I added a note on the dashboard so the results are not read as causes.
+- Survival analysis answers a different question from classification: not "will they leave?" but "when?". I also learned to check the Cox model's proportional hazards assumption instead of trusting it blindly.
+- The ROI results depend heavily on assumptions such as campaign cost, success rate and customer value. I labelled the output as revenue-based ROI, not profit, and kept the assumptions and disclaimer visible.
+
+**Challenges.** Keeping the dashboard correct when filters were applied was harder than I expected. Narrow filters can leave too few customers for survival analysis or the Cox model, so I tested every page with filters enabled and handled the empty cases. I also had to make sure customer IDs in the risk list match the source data.
+
+**What I would improve.** Add calibrated probabilities, test the retention assumptions against real campaign data, and compare more models, with cost-sensitive thresholds for who to target.
+
+---
 
 ## Acknowledgement
 
 Developed as part of the **DS-01 Internship Project at Nexvia Technologies**.
-
 Dataset: IBM Telco Customer Churn.
 
 ## Author
 
-**Dinesh Chandra Reddy**
-
-[GitHub Profile](https://github.com/dinesh15-hub)
+**Dinesh Chandra Reddy** · [GitHub Profile](https://github.com/dinesh15-hub)
